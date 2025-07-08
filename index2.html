@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>覲見舊日2025</title>
+  <style>
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background: radial-gradient(circle at center, #000 0%, #111 100%);
+  font-family: 'Cinzel', serif;
+  overflow: hidden;
+}
+.container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+  padding: 1em;
+}
+.line {
+  font-size: 6vw;
+  white-space: pre;
+  line-height: 1.6em;
+}
+.char {
+  display: inline-block;
+  opacity: 0;
+  transform: scale(1.3) rotate(3deg);
+  filter: blur(3px);
+  animation: appear 1.2s forwards, flicker 1.5s infinite;
+}
+@keyframes appear {
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0);
+  }
+}
+@keyframes flicker {
+  0% { opacity: 1; text-shadow: 0 0 4px #99ccff; }
+  5% { opacity: 0.4; text-shadow: 0 0 10px #ccffff; }
+  10% { opacity: 0.9; text-shadow: 0 0 6px #66ccff; }
+  15% { opacity: 0.5; text-shadow: 0 0 12px #99ccff; }
+  20% { opacity: 1; }
+  100% { opacity: 1; }
+}
+.glow {
+  text-shadow: 0 0 6px #66ccff, 0 0 12px #66ccff;
+}
+#startButton {
+  background: none;
+  border: 2px solid #66ccff;
+  color: #66ccff;
+  padding: 12px 24px;
+  font-size: 1.2em;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+}
+#startButton:hover {
+  background: #66ccff;
+  color: #000;
+}
+.control-bar {
+  position: absolute;
+  top: 85%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1.5em;
+  align-items: center;
+  z-index: 10;
+}
+#skipLink, #musicToggle {
+  font-size: 1em;
+  color: #999;
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+  cursor: pointer;
+}
+#skipLink:hover, #musicToggle:hover {
+  opacity: 1;
+  color: #66ccff;
+}
+.whisper {
+  position: absolute;
+  top: 5%;
+  width: 100%;
+  text-align: center;
+  font-size: 1em;
+  color: #888;
+  opacity: 0;
+  animation: fadeIn 4s ease-in-out forwards;
+  animation-delay: 1s;
+}
+.hint {
+  position: absolute;
+  bottom: 5%;
+  width: 100%;
+  text-align: center;
+  font-size: 0.9em;
+  color: #666;
+  opacity: 0;
+  animation: fadeIn 5s ease-in-out forwards;
+  animation-delay: 10s;
+}
+.chant {
+  position: absolute;
+  font-family: monospace;
+  font-size: 0.8em;
+  top: 15%;
+  width: 100%;
+  text-align: center;
+  color: #44f4ff;
+  opacity: 0.1;
+  animation: chantPulse 4s infinite alternate;
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+@keyframes chantPulse {
+  from {
+    letter-spacing: 1px;
+    opacity: 0.05;
+  }
+  to {
+    letter-spacing: 3px;
+    opacity: 0.2;
+  }
+}
+  </style>
+</head>
+<body>
+  <audio id="ritualSound" src="rit.mp3" preload="auto"></audio>
+  <div class="container">
+    <!--<div class="whisper">……祂們正在注視</div>-->
+    <!--<div class="chant">PH’NGLUI MGLW’NAFH CTHULHU R’LYEH WGAH’NAGL FHTAGN</div>-->
+    <div id="line1" class="line"></div>
+    <div id="line2" class="line"></div>
+    <button id="startButton">§ 點擊進入儀式 §</button>
+    <div class="control-bar">
+      <a href="https://www.google.com.tw/" id="skipLink">〈跳至活動頁面〉</a>
+      <span id="musicToggle">🎵</span>
+    </div>
+    <!--<div class="hint">你已踏入不可名狀之地</div>-->
+  </div>
+  <script>
+    const line1Text = "覲見舊日...";
+    const line2Text = "調查員 與 邪教徒";
+    const line1 = document.getElementById('line1');
+    const line2 = document.getElementById('line2');
+    const startButton = document.getElementById('startButton');
+    const audio = document.getElementById('ritualSound');
+    const musicToggle = document.getElementById('musicToggle');
+    const typeSpeed = 0.4;
+
+    let audioEnabled = true;
+
+musicToggle.addEventListener('click', () => {
+  audioEnabled = !audioEnabled;
+  musicToggle.textContent = audioEnabled ? '🎵' : '🔇';
+  if (audioEnabled) {
+    if (audio.currentTime < audio.duration) {
+      audio.play().catch(e => console.log("音樂播放失敗：", e));
+    }
+  } else {
+    audio.pause();
+  }
+});
+
+
+    function typeLine(target, text, delay = 0, onComplete = null) {
+      text.split('').forEach((char, i) => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.className = 'char glow';
+        span.style.animationDelay = `${delay + i * typeSpeed}s`;
+        target.appendChild(span);
+      });
+      if (onComplete) {
+        setTimeout(onComplete, delay * 1000 + text.length * typeSpeed * 1000 + 500);
+      }
+    }
+
+    function deleteLastChars(target, count, delay = 0, onComplete = null) {
+      const spans = Array.from(target.querySelectorAll('span')).slice(-count);
+      spans.forEach((span, i) => {
+        setTimeout(() => {
+          span.remove();
+        }, delay * 1000 + i * typeSpeed * 1000);
+      });
+      if (onComplete) {
+        setTimeout(onComplete, delay * 1000 + count * typeSpeed * 1000 + 300);
+      }
+    }
+
+    function appendChar(target, char, delay = 0) {
+      setTimeout(() => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.className = 'char glow';
+        span.style.animationDelay = `0s`;
+        target.appendChild(span);
+      }, delay * 1000);
+    }
+
+    startButton.addEventListener('click', () => {
+      startButton.style.display = 'none';
+
+      if (audioEnabled) {
+        audio.volume = 0.8;
+        audio.play().catch(e => console.log("播放失敗：", e));
+        setTimeout(() => {
+          audio.pause();
+          audio.currentTime = 0;
+        }, 25000);
+      }
+
+      setTimeout(() => {
+        window.location.href = "https://www.google.com.tw/";
+      }, 28000);
+
+      typeLine(line1, line1Text, 0, () => {
+        deleteLastChars(line1, 3, 0.5, () => {
+          appendChar(line1, '２', 0.5);
+          setTimeout(() => {
+            typeLine(line2, line2Text);
+          }, 2000);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
